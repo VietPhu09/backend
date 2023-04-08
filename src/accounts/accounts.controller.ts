@@ -30,9 +30,9 @@ export class AccountsController {
   login(@Body() account) {
     return this.accountsService.login({ email: account.email });
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get()
-  @Roles(Role.ADMIN, Role.CUSTOMER, Role.BUSSINESS)
+  // @Roles(Role.ADMIN, Role.CUSTOMER, Role.BUSSINESS)
   findAll() {
     return this.accountsService.findAll();
   }

@@ -1,5 +1,6 @@
 import { Image } from 'src/image/entities/image.entity';
 import { Post } from 'src/posts/entities/post.entity';
+import { Quiz } from 'src/quiz/entities/quiz.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import {
   Column,
@@ -32,6 +33,9 @@ export class Account {
     onUpdate: 'CASCADE',
   })
   role: number = 2;
+
+  @OneToMany(() => Quiz, (quiz) => quiz.account)
+  quizzes: Quiz[];
   @OneToMany(() => Post, (post) => post.account)
   images: Image[];
 }

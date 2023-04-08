@@ -11,5 +11,5 @@ export class Role {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  account: number;
+  account: Account[];
 }

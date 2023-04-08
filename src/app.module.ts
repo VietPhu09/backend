@@ -9,15 +9,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { FileModule } from './file/file.module';
 import { AuthModule } from './auth/auth.module';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     PostsModule,
     AccountsModule,
-    ImageModule,  
+    ImageModule,
     FileModule,
-    AuthModule
+    AuthModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],

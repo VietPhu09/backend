@@ -1,19 +1,19 @@
 import { Quiz } from './entities/quiz.entity';
-import { getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateQuizDto } from './dto/create-quiz.dto';
 
 @Injectable()
 export class QuizService {
-  async create(createQuizDto: any) {
+  constructor(
+    @InjectRepository(Quiz)
+    private readonly quizRepository: Repository<Quiz>,
+  ) {}
+  async create(createQuizDto: CreateQuizDto) {
     try {
-      await getRepository(Quiz)
-        .createQueryBuilder('quiz')
-        .insert()
-        .values(createQuizDto)
-        .execute();
-
+      await this.quizRepository.save(createQuizDto);
       return {
         statusCode: HttpStatus.CREATED,
       };
