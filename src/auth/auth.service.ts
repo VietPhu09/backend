@@ -1,13 +1,14 @@
-import { AccountsService } from './../accounts/accounts.service';
 import { Injectable } from '@nestjs/common';
 import { comparePassword } from 'src/helpers/password_compare.helper';
 import { JwtService } from '@nestjs/jwt';
-import { getRepository } from 'typeorm';
+import { Repository, getManager, getRepository } from 'typeorm';
 import { Account } from 'src/accounts/entities/account.entity';
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
-
+  constructor(
+    private jwtService: JwtService,
+    private readonly accountRepository: Repository<Account>,
+  ) {}
   async validateAccount(email: string, pass: string): Promise<any> {
     try {
       const account = await getRepository(Account)
@@ -24,11 +25,14 @@ export class AuthService {
       console.log(error);
     }
   }
-  async login(account: any) {
-    const payload = { username: account.username, id: account.id };
+  async login({ email }) {
+    const account: any = await getManager().findOne('account', {
+      where: { email },
+    });
+    const payload = { email: account.email, id: account.id };
     return {
       access_token: this.jwtService.sign(payload),
-      email: account.email,
+      id: account.id,
     };
   }
 }

@@ -8,14 +8,16 @@ import { ImageModule } from './image/image.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { FileModule } from './file/file.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     PostsModule,
     AccountsModule,
-    ImageModule,
+    ImageModule,  
     FileModule,
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

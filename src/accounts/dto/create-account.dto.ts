@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Match } from 'src/decorator/match.decorator';
 export class CreateAccountDto {
+  id: number;
   @IsNotEmpty()
   username: string;
   @IsEmail()
@@ -15,7 +16,8 @@ export class CreateAccountDto {
   @IsNotEmpty()
   password: string;
   @IsNotEmpty()
-  avatar?: string;
+  files?: string;
+  @IsNotEmpty()
   @Match('password')
   comfirmPassword: string;
 }

@@ -5,6 +5,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -26,13 +27,11 @@ export class Account {
   sex: string;
   @Column()
   password: string;
-  @OneToOne(() => Role, {
+  @ManyToOne(() => Role, (role) => role.id, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn()
   role: number = 2;
   @OneToMany(() => Post, (post) => post.account)
   images: Image[];
-  
 }
