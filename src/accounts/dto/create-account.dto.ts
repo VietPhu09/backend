@@ -11,7 +11,7 @@ export class CreateAccountDto {
   address: string;
   @IsNotEmpty()
   phone_number: string;
-  @IsNotEmpty()
+@IsNotEmpty()
   sex: string;
   @IsNotEmpty()
   password: string;

@@ -1,5 +1,12 @@
 import { Account } from 'src/accounts/entities/account.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Quiz {
@@ -11,4 +18,9 @@ export class Quiz {
   business: number;
   @ManyToOne(() => Account, (account) => account.id)
   account: number;
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

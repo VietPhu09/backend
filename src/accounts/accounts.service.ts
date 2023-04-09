@@ -2,13 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account } from './entities/account.entity';
-import { Repository, getManager, EntityManager, getRepository } from 'typeorm';
+import { Repository, getManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from 'src/image/entities/image.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { hashPassword } from 'src/helpers/password_hash.helper';
 import { Connection } from 'typeorm';
-import { Quiz } from 'src/quiz/entities/quiz.entity';
 @Injectable()
 export class AccountsService {
   constructor(
@@ -66,20 +65,32 @@ export class AccountsService {
     return this.authService.login(account);
   }
   async findAll() {
-    const accounts = await this.accountRepository
+    return await this.accountRepository
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.role', 'role')
       .getMany();
-    return accounts;
   }
-  async findOne(id: number): Promise<Quiz[] | undefined> {
-    const quizList = await getRepository(Quiz)
-      .createQueryBuilder('quiz')
-      .leftJoinAndSelect('quiz.account', 'account')
+
+  async findOne(id: number): Promise<Account | undefined | Object> {
+    const account = await this.accountRepository
+      .createQueryBuilder('account')
       .leftJoinAndSelect('account.role', 'role')
-      .where('quiz.business = :id', { id: 3 })
-      .getMany();
-    return quizList;
+      .leftJoinAndSelect('account.quizzes', 'quiz')
+      .leftJoinAndSelect('account.posts', 'posts')
+      .leftJoinAndSelect('quiz.account', 'quizAccount')
+      .leftJoinAndSelect('posts.images', 'images')
+      .leftJoinAndSelect('account.events', 'events')
+      .leftJoinAndSelect('events.post', 'post')
+      .leftJoinAndSelect('events.qrs', 'qrs')
+      .where('account.id =:id', { id })
+      .getOne();
+    if (!account) {
+      return {
+        message: `Account doesn't exits in system !`,
+        statusCode: HttpStatus.NOT_FOUND,
+      };
+    }
+    return account;
   }
   async update(id: number, updateAccountDto: UpdateAccountDto) {
     const queryRunner = this.connection.createQueryRunner();

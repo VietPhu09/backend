@@ -1,5 +1,12 @@
 import { Account } from 'src/accounts/entities/account.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Role {
@@ -11,5 +18,10 @@ export class Role {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  account: Account[];
+  account: number;
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

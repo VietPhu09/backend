@@ -7,6 +7,9 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  Index,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 @Entity()
 export class Image {
@@ -19,12 +22,16 @@ export class Image {
     onUpdate: 'CASCADE',
   })
   post: number;
-  @OneToOne(() => Account, {
+  @ManyToOne(() => Account, (account) => account.images, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn()
   account: number;
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
   // hotel: number;
   // @ManyToOne(() => Spa, (spa) => spa.images, {
   //   onDelete: 'CASCADE',
