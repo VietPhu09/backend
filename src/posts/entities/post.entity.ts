@@ -22,6 +22,10 @@ export class Post {
   title: string;
   @Column()
   slot: number;
+  @Column()
+  startDay: string;
+  @Column()
+  startTime: string;
   @ManyToOne(() => Account, (account) => account.images, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

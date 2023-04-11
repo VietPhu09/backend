@@ -10,11 +10,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Repository } from 'typeorm';
-import { AuthModule } from 'src/auth/auth.module';
-
+import { EmailModule } from 'src/email/email.module';
+import { ResetPassword } from 'src/reset_password/entities/reset_password.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Account, Image]),
+    EmailModule,
+    TypeOrmModule.forFeature([Account, Image, ResetPassword]),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '2h' },

@@ -1,10 +1,8 @@
 import { Account } from 'src/accounts/entities/account.entity';
-import { Image } from 'src/image/entities/image.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Qr } from 'src/qr/entities/qr.entity';
-import { Quiz } from 'src/quiz/entities/quiz.entity';
-import { Role } from 'src/roles/entities/role.entity';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -18,9 +16,6 @@ import {
 export class EventRegister {
   @PrimaryGeneratedColumn()
   id: number;
-  //   @Column({ type: 'text' })
-  //   qr_link: string;
-
   @ManyToOne(() => Post, (account) => account.events)
   @JoinColumn()
   post: number;
@@ -32,9 +27,10 @@ export class EventRegister {
   account: number;
   @OneToMany(() => Qr, (qr) => qr.events)
   qrs: number;
+  @Column({ default: false })
+  status: boolean;
   @CreateDateColumn()
   createAt: Date;
-
   @UpdateDateColumn()
   updateAt: Date;
 }

@@ -13,6 +13,8 @@ import { QuizModule } from './quiz/quiz.module';
 import { EventRegisterModule } from './event_register/event_register.module';
 import { EmailModule } from './email/email.module';
 import { QrModule } from './qr/qr.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { ResetPasswordModule } from './reset_password/reset_password.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { QrModule } from './qr/qr.module';
     EventRegisterModule,
     EmailModule,
     QrModule,
+    ScheduleModule,
+    ResetPasswordModule,
   ],
   controllers: [AppController],
   providers: [AppService],

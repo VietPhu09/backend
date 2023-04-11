@@ -15,6 +15,7 @@ export class EmailService {
       },
     });
   }
+
   async sendEmail(
     to: string,
     subject: string,
@@ -35,6 +36,20 @@ export class EmailService {
           path: qr,
         },
       ],
+    });
+  }
+  async sendEmailToResetPassword(
+    to: string,
+    subject: string,
+    text: string,
+  ): Promise<void> {
+    console.log(to, subject, text);
+
+    await this.transporter.sendMail({
+      from: EMAIL_USERNAME,
+      to,
+      subject,
+      text,
     });
   }
 }

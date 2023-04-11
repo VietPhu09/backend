@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EventRegisterService } from './event_register.service';
 import { CreateEventRegisterDto } from './dto/create-event_register.dto';
 import { UpdateEventRegisterDto } from './dto/update-event_register.dto';
@@ -17,13 +25,16 @@ export class EventRegisterController {
     return this.eventRegisterService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventRegisterService.findOne(+id);
+  @Get('/check/:account/:post')
+  findOne(@Param('account') account: string, @Param('post') post: string) {
+    return this.eventRegisterService.findOne(+account, +post);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventRegisterDto: UpdateEventRegisterDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEventRegisterDto: UpdateEventRegisterDto,
+  ) {
     return this.eventRegisterService.update(+id, updateEventRegisterDto);
   }
 

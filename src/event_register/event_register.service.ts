@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventRegisterDto } from './dto/create-event_register.dto';
 import { UpdateEventRegisterDto } from './dto/update-event_register.dto';
 import { EmailService } from 'src/email/email.service';
@@ -51,7 +51,7 @@ export class EventRegisterService {
       });
       // FIND ACCOUNT TO GET EMAIL
       if (findAccount?.email && findAccount?.id) {
-        const qr = await QR.toDataURL(`${LINK}/${findAccount?.id}`);
+        const qr = await QR.toDataURL(`${LINK}/${post}/${findAccount?.id}`);
         const qrEntity = await this.qrRepository.create({
           qr_link: qr,
           account: findAccount?.id,
@@ -93,8 +93,36 @@ export class EventRegisterService {
     return `This action returns all eventRegister`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} eventRegister`;
+  async findOne(account: number, post: number) {
+    const queryRunner = this.connection.createQueryRunner();
+    try {
+      await queryRunner.startTransaction();
+      const event = await this.eventRepository.findOne({
+        where: { account, post },
+      });
+      if (!event) {
+        return {
+          message: 'Tài khoản chưa đăng kí sự kiện !',
+          statusCode: HttpStatus.NOT_FOUND,
+        };
+      }
+      queryRunner.manager.update(
+        EventRegister,
+        { account, post },
+        { status: true },
+      );
+
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Điểm danh thành công !',
+        statusCode: HttpStatus.ACCEPTED,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException('Create Account Fail !', HttpStatus.BAD_REQUEST);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   update(id: number, updateEventRegisterDto: UpdateEventRegisterDto) {

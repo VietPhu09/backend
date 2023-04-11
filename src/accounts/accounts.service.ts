@@ -8,6 +8,7 @@ import { Image } from 'src/image/entities/image.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { hashPassword } from 'src/helpers/password_hash.helper';
 import { Connection } from 'typeorm';
+
 @Injectable()
 export class AccountsService {
   constructor(
@@ -53,8 +54,6 @@ export class AccountsService {
         message: 'Create Account Successfully !',
       };
     } catch (error) {
-      console.log(error);
-
       await queryRunner.rollbackTransaction();
       throw new HttpException('Create Account Fail !', HttpStatus.BAD_REQUEST);
     } finally {
@@ -140,5 +139,11 @@ export class AccountsService {
     } finally {
       await queryRunner.release();
     }
+  }
+  async forgotPassword(email: string) {
+    try {
+      const account = await this.accountRepository.findOne({ email });
+      return account;
+    } catch (error) {}
   }
 }

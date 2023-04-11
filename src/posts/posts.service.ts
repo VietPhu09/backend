@@ -54,8 +54,22 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(id: number) {
+    const post = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.account', 'account')
+      .leftJoinAndSelect('post.images', 'images')
+      .leftJoinAndSelect('post.events', 'events')
+      .leftJoinAndSelect('events.account', 'eventAccount')
+      .where('post.id =:id', { id })
+      .getOne();
+    if (!post) {
+      return {
+        message: `Post doesn't exits in system !`,
+        statusCode: HttpStatus.NOT_FOUND,
+      };
+    }
+    return post;
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
