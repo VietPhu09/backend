@@ -9,6 +9,9 @@ import { EventRegister } from './entities/event_register.entity';
 import { Account } from 'src/accounts/entities/account.entity';
 import { LINK } from 'src/contains';
 import { Qr } from 'src/qr/entities/qr.entity';
+import { Post } from 'src/posts/entities/post.entity';
+import { templateEvent } from 'src/helpers/templateEvent';
+import { convertTime } from 'src/helpers/covertTime';
 @Injectable()
 export class EventRegisterService {
   constructor(
@@ -20,6 +23,8 @@ export class EventRegisterService {
     private readonly accountRepository: Repository<Account>,
     @InjectRepository(Qr)
     private readonly qrRepository: Repository<Qr>,
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
   ) {}
   async create(createEventRegisterDto: CreateEventRegisterDto) {
     const queryRunner = this.connection.createQueryRunner();
@@ -29,12 +34,23 @@ export class EventRegisterService {
       const accounts = await this.eventRepository.find({
         where: { account, post },
       });
+
+      const posts = await this.postRepository.findOne({ where: { id: post } });
+
       if (accounts.length > 0) {
         return {
           message: `You are registed, don't spam please !`,
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
+      if (!posts) {
+        return {
+          message: `Post is doesn't exits in our system !`,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      const { startDay, startTime } = posts;
+
       // SAVE EVENT REGISTER
       const id = await getManager().transaction(
         async (transactionalEntityManager) => {
@@ -51,7 +67,9 @@ export class EventRegisterService {
       });
       // FIND ACCOUNT TO GET EMAIL
       if (findAccount?.email && findAccount?.id) {
-        const qr = await QR.toDataURL(`${LINK}/${post}/${findAccount?.id}`);
+        const qr = await QR.toDataURL(
+          `${LINK}/event_register/check/${post}/${findAccount?.id}`,
+        );
         const qrEntity = await this.qrRepository.create({
           qr_link: qr,
           account: findAccount?.id,
@@ -60,8 +78,13 @@ export class EventRegisterService {
         await queryRunner.manager.save(Qr, qrEntity);
         await this.emailService.sendEmail(
           findAccount?.email,
-          'CAM ON BAN DA DANG KI',
-          'Cam on ban da dang ki tham gia chuong trinh',
+          'Thank you for signing up for the event',
+          templateEvent(
+            findAccount.username,
+            convertTime(startDay),
+            startTime,
+            posts.title,
+          ),
           qr,
         );
       }

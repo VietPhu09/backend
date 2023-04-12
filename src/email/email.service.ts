@@ -22,8 +22,6 @@ export class EmailService {
     text: string,
     qr: string,
   ): Promise<void> {
-    console.log(to, subject, text, qr);
-
     await this.transporter.sendMail({
       from: EMAIL_USERNAME,
       to,
@@ -43,13 +41,11 @@ export class EmailService {
     subject: string,
     text: string,
   ): Promise<void> {
-    console.log(to, subject, text);
-
     await this.transporter.sendMail({
       from: EMAIL_USERNAME,
       to,
       subject,
-      text,
+      html: text,
     });
   }
 }

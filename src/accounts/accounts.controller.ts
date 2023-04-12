@@ -28,6 +28,7 @@ import { ResetPassword } from 'src/reset_password/entities/reset_password.entity
 import { Repository } from 'typeorm';
 import { Account } from './entities/account.entity';
 import { comparePassword } from 'src/helpers/password_compare.helper';
+import { templateResetPassword } from 'src/helpers/templateResetPassword';
 
 @Controller('account')
 export class AccountsController {
@@ -75,7 +76,7 @@ export class AccountsController {
       await this.sendMailService.sendEmailToResetPassword(
         body.email,
         'RESET YOUR PASSWORD',
-        `Ki tu de reset password cua ban, vui long khong chia se : ${paddedNumber}`,
+        templateResetPassword(paddedNumber),
       );
       const checkAccountResetPassword =
         await this.resetPasswordRepository.findOne({ account: account.id });

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailService } from 'src/email/email.service';
+import { templateEvent } from 'src/helpers/templateEvent';
 import { Post } from 'src/posts/entities/post.entity';
 import { Repository } from 'typeorm';
 var cron = require('node-cron');
@@ -15,7 +16,7 @@ export class ScheduleService {
   }
   async handleSchedule() {
     try {
-      cron.schedule('0 35 20 * * *', async () => {
+      cron.schedule('01 56 19 * * *', async () => {
         const date = new Date();
         const day = date.getDate(); // Trích xuất ngày
         const month = date.getMonth() + 1; // Trích xuất tháng (tháng bắt đầu từ 0 nên cần cộng thêm 1)
@@ -31,15 +32,22 @@ export class ScheduleService {
           .getMany();
         if (posts.length > 0) {
           for (let i = 0; i < posts.length; i++) {
-            const { events, startDay, startTime } = posts[i];
+            const { events, startTime, title } = posts[i];
             for (let j = 0; j < events.length; j++) {
               const event: any = events[j];
-              const email = event.account.email;
+              const { email, username } = event.account;
+              console.log(email);
+
               const qr = event.qrs[0].qr_link;
               await this.emailService.sendEmail(
                 email,
-                `LICH HEN EVENT VAO NGAY ${startDay}`,
-                'LICH HEN EVENT',
+                `JOIN OUR EVENT ON ${startTime} - ${day}/${month}/${year}`,
+                templateEvent(
+                  username,
+                  `${day}/${month}/${year}`,
+                  startTime,
+                  title,
+                ),
                 qr,
               );
             }

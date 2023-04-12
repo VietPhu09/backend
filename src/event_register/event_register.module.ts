@@ -9,11 +9,12 @@ import { AccountsModule } from 'src/accounts/accounts.module';
 import { Account } from 'src/accounts/entities/account.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Qr } from 'src/qr/entities/qr.entity';
+import { Post } from 'src/posts/entities/post.entity';
 
 @Module({
   imports: [
     EmailModule,
-    TypeOrmModule.forFeature([EventRegister, Account, Image, Qr]),
+    TypeOrmModule.forFeature([EventRegister, Account, Image, Qr, Post]),
     AccountsModule,
   ],
   controllers: [EventRegisterController],
