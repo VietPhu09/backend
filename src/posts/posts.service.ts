@@ -88,7 +88,7 @@ export class PostsService {
         }
       }
       delete updatePostDto.files;
-      const findOnePost = await this.postRepository.findOne(id);
+      const findOnePost = await this.postRepository.findOne({where: {id}});
       if (!findOnePost) {
         return {
           statusCode: HttpStatus.NOT_FOUND,
@@ -113,7 +113,7 @@ export class PostsService {
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const post = await this.postRepository.findOne({ id });
+      const post = await this.postRepository.findOne({ where: {id} });
       if (!post) {
         return {
           message: "Post doesn't exits in system !",

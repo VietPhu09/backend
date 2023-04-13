@@ -16,8 +16,6 @@ import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Roles } from 'src/decorator/roles.decorator';
-import { Role } from 'src/enums/role.enum';
 import {
   hashPassword,
   hashResetPassword,
@@ -64,7 +62,7 @@ export class AccountsController {
   @Post('/forgot-password')
   async forgotPassword(@Body() body: { email: string }, @Req() req) {
     try {
-      const account = await this.accountsService.forgotPassword(body.email);
+      const account: any = await this.accountsService.forgotPassword(body.email);
       if (!account) {
         return {
           message: 'Account not found in our system !',
@@ -79,7 +77,7 @@ export class AccountsController {
         templateResetPassword(paddedNumber),
       );
       const checkAccountResetPassword =
-        await this.resetPasswordRepository.findOne({ account: account.id });
+        await this.resetPasswordRepository.findOne({where: {account: account.id}})
       // Kiểm tra xem account này đã reset password chưa
       if (checkAccountResetPassword) {
         // Nếu có rồi thì xóa đi
@@ -114,9 +112,9 @@ export class AccountsController {
       const { account } = req.session;
       console.log(account);
       if (account) {
-        const secret = await this.resetPasswordRepository.findOne({
+        const secret = await this.resetPasswordRepository.findOne({where: {
           account: account,
-        });
+        }});
         const isCompareNumber = await comparePassword(
           body.secret,
           secret.secret,
@@ -135,7 +133,7 @@ export class AccountsController {
         }
 
         const pasword = await hashPassword(body.newPassword);
-        const accounts = await this.accountRepository.findOne({ id: account });
+        const accounts = await this.accountRepository.findOne({ where: {id: account }});
         if (accounts) {
           accounts.password = pasword;
           return await this.accountsService.update(accounts.id, accounts);

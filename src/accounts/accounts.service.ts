@@ -8,7 +8,6 @@ import { Image } from 'src/image/entities/image.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { hashPassword } from 'src/helpers/password_hash.helper';
 import { Connection } from 'typeorm';
-
 @Injectable()
 export class AccountsService {
   constructor(
@@ -24,7 +23,7 @@ export class AccountsService {
     try {
       await queryRunner.startTransaction();
       const { email, files } = createAccountDto;
-      const findAccount = await this.accountRepository.findOne({ email });
+      const findAccount = await this.accountRepository.findOne({ where: {email} });
       if (findAccount) {
         return {
           message: 'Account already exists in the system, please re-register!',
@@ -83,25 +82,48 @@ export class AccountsService {
       .leftJoinAndSelect('events.qrs', 'qrs')
       .where('account.id =:id', { id })
       .getOne();
-    if (!account) {
-      return {
-        message: `Account doesn't exits in system !`,
-        statusCode: HttpStatus.NOT_FOUND,
-      };
-    }
     return account;
   }
   async update(id: number, updateAccountDto: UpdateAccountDto) {
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const account = await this.accountRepository.findOne({ id });
+      const account = await this.accountRepository.findOne({ where: {id} });
       if (!account) {
         return {
           message: "Account doesn't exits in system !",
           statusCode: HttpStatus.NOT_FOUND,
         };
       }
+      if (updateAccountDto.password && !updateAccountDto.comfirmPassword) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message:
+            'If you want to change password, please enter full password and comfirmPassword',
+        };
+      }
+      if (updateAccountDto.password && updateAccountDto.comfirmPassword) {
+        if (updateAccountDto.password !== updateAccountDto.comfirmPassword) {
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'Passwords do not match',
+          };
+        }
+        updateAccountDto.password = await hashPassword(
+          updateAccountDto.password,
+        );
+
+        delete updateAccountDto.comfirmPassword;
+      }
+      if (updateAccountDto?.files.length > 0) {
+        const image = await this.imageRepository.findOne({
+          where: {account: account.id,}
+        });
+        image.image_url = updateAccountDto.files[0];
+        await queryRunner.manager.update(Image, image.id, image);
+        delete updateAccountDto.files;
+      }
+
       await queryRunner.manager.update('account', id, updateAccountDto);
       await queryRunner.commitTransaction();
       return {
@@ -120,7 +142,7 @@ export class AccountsService {
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const account = await this.accountRepository.findOne({ id });
+      const account = await this.accountRepository.findOne({ where: {id }});
       if (!account) {
         return {
           message: "Account doesn't exits in system !",
@@ -140,10 +162,12 @@ export class AccountsService {
       await queryRunner.release();
     }
   }
-  async forgotPassword(email: string) {
+  async forgotPassword(email: string): Promise<Account | Object> {
     try {
-      const account = await this.accountRepository.findOne({ email });
+      const account = await this.accountRepository.findOne({ where: {email} });
       return account;
-    } catch (error) {}
+    } catch (error) {
+    
+    }
   }
 }
