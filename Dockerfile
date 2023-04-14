@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # Thiết lập biến môi trường
-ENV PORT=3000
+ENV PORT=5000
 ENV NODE_ENV=production
 
 # Mở port

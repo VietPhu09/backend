@@ -53,6 +53,7 @@ export class AccountsService {
         message: 'Create Account Successfully !',
       };
     } catch (error) {
+      console.log(error);
       await queryRunner.rollbackTransaction();
       throw new HttpException('Create Account Fail !', HttpStatus.BAD_REQUEST);
     } finally {

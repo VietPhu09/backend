@@ -1,0 +1,25 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    environment:
+       MYSQL_ROOT_PASSWORD: nguyenthanhtung
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: nguyenthanhtung
+      DB_DATABASE: event
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: nguyenthanhtung
+    ports:
+      - '8080:80'

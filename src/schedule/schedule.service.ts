@@ -16,7 +16,7 @@ export class ScheduleService {
   }
   async handleSchedule() {
     try {
-      cron.schedule('01 56 19 * * *', async () => {
+      cron.schedule('* * * * * *', async () => {
         const date = new Date();
         const day = date.getDate(); // Trích xuất ngày
         const month = date.getMonth() + 1; // Trích xuất tháng (tháng bắt đầu từ 0 nên cần cộng thêm 1)
@@ -36,8 +36,6 @@ export class ScheduleService {
             for (let j = 0; j < events.length; j++) {
               const event: any = events[j];
               const { email, username } = event.account;
-              console.log(email);
-
               const qr = event.qrs[0].qr_link;
               await this.emailService.sendEmail(
                 email,
