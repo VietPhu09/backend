@@ -14,7 +14,8 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: nguyenthanhtung
       DB_DATABASE: event
-
+    depends_on:
+      - db
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -23,3 +24,5 @@ services:
       MYSQL_ROOT_PASSWORD: nguyenthanhtung
     ports:
       - '8080:80'
+    depends_on:
+      - db

@@ -77,6 +77,8 @@
     "tsconfig-paths": "4.0.0",
     "typeorm": "^0.2.45",
     "typescript": "^4.3.5",
+    "wait-for-it": "^1.0.0",
+    "wait-for-it.sh": "^1.0.0",
     "webpack": "^5.75.0"
   },
   "devDependencies": {
