@@ -13,23 +13,29 @@ export class ScheduleService {
     private readonly emailService: EmailService,
   ) {
     this.handleSchedule();
+    console.log('Trích xuất ngày');
   }
   async handleSchedule() {
     try {
-      cron.schedule('* * * * * *', async () => {
+      cron.schedule('10000 * * * * *', async () => {
         const date = new Date();
-        const day = date.getDate(); // Trích xuất ngày
+        const day = date.getDate();
         const month = date.getMonth() + 1; // Trích xuất tháng (tháng bắt đầu từ 0 nên cần cộng thêm 1)
         const year = date.getFullYear(); // Trích xuất năm
 
-        const result: string = `${year}-${month}-${day}`; // Tạo chuỗi kết quả
+        const result: string = `${year}-${month}-${day}`;
         const posts = await this.postRepository
           .createQueryBuilder('post')
           .leftJoinAndSelect('post.events', 'events')
           .leftJoinAndSelect('events.account', 'account')
           .leftJoinAndSelect('events.qrs', 'qrs')
-          .where('post.startDay = :startDay', { startDay: result })
+          // .where('post.startDay = :startDay', { startDay: result })
           .getMany();
+        console.log(
+          '------------------------------------------------',
+          posts.length,
+        );
+
         if (posts.length > 0) {
           for (let i = 0; i < posts.length; i++) {
             const { events, startTime, title } = posts[i];
@@ -37,6 +43,7 @@ export class ScheduleService {
               const event: any = events[j];
               const { email, username } = event.account;
               const qr = event.qrs[0].qr_link;
+              console.log(email);
               await this.emailService.sendEmail(
                 email,
                 `JOIN OUR EVENT ON ${startTime} - ${day}/${month}/${year}`,

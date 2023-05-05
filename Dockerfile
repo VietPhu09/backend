@@ -1,6 +1,5 @@
 # Sử dụng node image với tag LTS (14.x.x)
 FROM node:14-alpine
-
 # Thiết lập thư mục làm việc trong container
 WORKDIR /app
 

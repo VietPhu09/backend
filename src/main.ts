@@ -19,7 +19,7 @@ async function bootstrap() {
     }),
   );
   app.listen(port, () => {
-    console.log(`Server is running on site http://localhost:${port}`);
+    console.log(`Server  is running on site http://localhost:${port}`);
   });
 }
 

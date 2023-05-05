@@ -49,8 +49,14 @@ export class EventRegisterService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
+      if (posts.slot <= 1) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Not enough slot, see you again other event !',
+        };
+      }
+      --posts.slot;
       const { startDay, startTime } = posts;
-
       // SAVE EVENT REGISTER
       const id = await getManager().transaction(
         async (transactionalEntityManager) => {
@@ -76,6 +82,7 @@ export class EventRegisterService {
           events: id,
         });
         await queryRunner.manager.save(Qr, qrEntity);
+        await queryRunner.manager.update(Post, { id: posts.id }, posts);
         await this.emailService.sendEmail(
           findAccount?.email,
           'Thank you for signing up for the event',

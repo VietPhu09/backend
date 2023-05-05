@@ -86,10 +86,11 @@ export class AccountsService {
     return account;
   }
   async update(id: number, updateAccountDto: UpdateAccountDto) {
+    console.log(updateAccountDto);
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const account = await this.accountRepository.findOne({ where: {id} });
+      const account = await this.accountRepository.findOne({ where: { id } });
       if (!account) {
         return {
           message: "Account doesn't exits in system !",
@@ -116,14 +117,15 @@ export class AccountsService {
 
         delete updateAccountDto.comfirmPassword;
       }
-      if (updateAccountDto?.files.length > 0) {
+      if (updateAccountDto?.files?.length > 0) {
         const image = await this.imageRepository.findOne({
-          where: {account: account.id,}
+          where: { account: account.id },
         });
         image.image_url = updateAccountDto.files[0];
         await queryRunner.manager.update(Image, image.id, image);
         delete updateAccountDto.files;
       }
+      console.log('log');
 
       await queryRunner.manager.update('account', id, updateAccountDto);
       await queryRunner.commitTransaction();
@@ -132,6 +134,8 @@ export class AccountsService {
         statusCode: HttpStatus.ACCEPTED,
       };
     } catch (err) {
+      console.log(err);
+
       await queryRunner.rollbackTransaction();
       throw err;
     } finally {

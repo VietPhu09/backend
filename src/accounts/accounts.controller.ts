@@ -110,11 +110,12 @@ export class AccountsController {
   ) {
     try {
       const { account } = req.session;
-      console.log(account);
       if (account) {
-        const secret = await this.resetPasswordRepository.findOne({where: {
-          account: account,
-        }});
+        const secret = await this.resetPasswordRepository.findOne({
+          where: {
+            account: account,
+          },
+        });
         const isCompareNumber = await comparePassword(
           body.secret,
           secret.secret,
@@ -125,22 +126,17 @@ export class AccountsController {
             statusCode: HttpStatus.BAD_REQUEST,
           };
         }
-        if (body.confirmNewPassword !== body.newPassword) {
-          return {
-            message: 'The new password must match the confirmation password !',
-            statusCode: HttpStatus.BAD_REQUEST,
-          };
-        }
-
-        const pasword = await hashPassword(body.newPassword);
-        const accounts = await this.accountRepository.findOne({ where: {id: account }});
+        const accounts = await this.accountRepository.findOne({
+          where: { id: account },
+        });
         if (accounts) {
-          accounts.password = pasword;
+          accounts.password = body.newPassword;
+          accounts['comfirmPassword'] = body.newPassword;
           return await this.accountsService.update(accounts.id, accounts);
         }
       } else {
         return {
-          message: 'Khong co email',
+          message: 'Please forgot email again !',
         };
       }
     } catch (error) {}
