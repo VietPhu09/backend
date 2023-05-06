@@ -31,7 +31,7 @@ export class Post {
     onUpdate: 'CASCADE',
   })
   @JoinColumn()
-  account: any;
+  account: number;
   @OneToMany(() => Image, (image) => image.post)
   images: Image[];
   @OneToMany(() => EventRegister, (event) => event.post)

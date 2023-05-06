@@ -32,7 +32,7 @@ import { templateResetPassword } from 'src/helpers/templateResetPassword';
 export class AccountsController {
   constructor(
     private readonly accountsService: AccountsService,
-    private readonly sendMailService: EmailService,
+  private readonly sendMailService: EmailService,
     @InjectRepository(ResetPassword)
     private readonly resetPasswordRepository: Repository<ResetPassword>,
     @InjectRepository(Account)

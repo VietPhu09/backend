@@ -14,8 +14,10 @@ import {
 export class FileController {
   @Post('/upload')
   @UseInterceptors(FilesInterceptor('files', 300, { storage }))
-async file(@UploadedFiles() files) {
-  return files;
+  async file(@UploadedFiles() files) {
+    console.log(files);
+
+    return files;
   }
 
   // @Get('/image/:id')

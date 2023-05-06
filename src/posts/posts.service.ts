@@ -28,6 +28,8 @@ export class PostsService {
           return postId;
         },
       );
+      console.log(files);
+      
       for (let i = 0; i < files.length; i++) {
         const image = await this.imageRepository.create({
           image_url: files[i],

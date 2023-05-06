@@ -18,6 +18,7 @@ async function bootstrap() {
       saveUninitialized: true,
     }),
   );
+  app.setGlobalPrefix('api/v1');
   app.listen(port, () => {
     console.log(`Server  is running on site http://localhost:${port}`);
   });

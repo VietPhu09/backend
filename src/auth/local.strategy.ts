@@ -17,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!account) {
       throw new UnauthorizedException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Email Or Password is wrong !!!',
+        message: 'Email or password is wrong !!!',
       });
     }
     return account;
