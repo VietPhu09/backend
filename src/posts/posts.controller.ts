@@ -21,31 +21,31 @@ import { Role } from 'src/enums/role.enum';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post()
-  @Roles(Role.ADMIN)
+  // @Roles(Role.ADMIN)
   create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto);
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/all')
   findAll() {
     return this.postsService.findAll();
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(+id);
   }
-  @UseGuards(AuthGuard('jwt'))
-  @Roles(Role.BUSSINESS)
+  // @UseGuards(AuthGuard('jwt'))
+  // @Roles(Role.BUSSINESS)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(+id, updatePostDto);
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  @Roles(Role.BUSSINESS)
+  // @Roles(Role.BUSSINESS)
   remove(@Param('id') id: string) {
     return this.postsService.remove(+id);
   }

@@ -18,9 +18,9 @@ import { Role } from 'src/enums/role.enum';
 @Controller('event-register')
 export class EventRegisterController {
   constructor(private readonly eventRegisterService: EventRegisterService) {}
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post()
-  @Roles(Role.CUSTOMER)
+  // @Roles(Role.CUSTOMER)
   create(@Body() createEventRegisterDto: CreateEventRegisterDto) {
     return this.eventRegisterService.create(createEventRegisterDto);
   }
@@ -31,9 +31,9 @@ export class EventRegisterController {
   findAll() {
     return this.eventRegisterService.findAll();
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/check/:account/:post')
-  @Roles(Role.CUSTOMER)
+  // @Roles(Role.CUSTOMER)
   findOne(@Param('account') account: string, @Param('post') post: string) {
     return this.eventRegisterService.findOne(+account, +post);
   }

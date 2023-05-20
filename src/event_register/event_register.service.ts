@@ -49,7 +49,7 @@ export class EventRegisterService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
-      if (posts.slot <= 1) {
+      if (posts.slot === 0) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
           message: 'Not enough slot, see you again other event !',
@@ -74,7 +74,7 @@ export class EventRegisterService {
       // FIND ACCOUNT TO GET EMAIL
       if (findAccount?.email && findAccount?.id) {
         const qr = await QR.toDataURL(
-          `${LINK}/event_register/check/${post}/${findAccount?.id}`,
+          `${LINK}/event_register/check/${findAccount?.id}/${post}`,
         );
         const qrEntity = await this.qrRepository.create({
           qr_link: qr,

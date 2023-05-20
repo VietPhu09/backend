@@ -51,13 +51,13 @@ export class AccountsController {
     console.log(account);
     return this.accountsService.login({ email: account.email });
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get()
-  @Roles(Role.ADMIN)
+  // @Roles(Role.ADMIN)
   async findAll() {
     return await this.accountsService.findAll();
   }
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.accountsService.findOne(+id);
@@ -156,13 +156,13 @@ export class AccountsController {
     } catch (error) {}
   }
   @Patch(':id')
-  // @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
     return this.accountsService.update(+id, updateAccountDto);
   }
 
   @Delete(':id')
-  // @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.accountsService.remove(+id);
   }
