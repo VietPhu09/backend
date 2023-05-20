@@ -51,14 +51,14 @@ export class AccountsController {
     console.log(account);
     return this.accountsService.login({ email: account.email });
   }
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  // @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN)
   async findAll() {
     return await this.accountsService.findAll();
   }
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  // @Roles(Role.ADMIN)
   findOne(@Param('id') id: string) {
     return this.accountsService.findOne(+id);
   }

@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { ROLES_KEY } from 'src/decorator/roles.decorator';
 @Injectable()
@@ -7,6 +8,7 @@ export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private accountService: AccountsService,
+    private jwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -17,7 +19,9 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-    const { id } = context.switchToHttp().getRequest().headers;
+    const token = context.switchToHttp().getRequest().headers;
+    const account = this.jwtService.verify(token.authorization.split(' ')[1]);
+    const { id } = account;
     const findAccount: any = await this.accountService.findOne(id);
     return requiredRoles.some((role) => {
       return role === findAccount?.role?.role_name;

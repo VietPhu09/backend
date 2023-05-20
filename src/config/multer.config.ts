@@ -10,5 +10,5 @@ export const storage = diskStorage({
 });
 
 function generateFilename(file: any) {
-  return `${Date.now()}_image_^^${extname(file.originalname)}`;
+  return `${Date.now()}_image_${extname(file.originalname)}`;
 }

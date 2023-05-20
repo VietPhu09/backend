@@ -87,7 +87,14 @@ export class AccountsService {
   async findOne(id: number): Promise<Account | undefined | Object> {
     const account = await this.accountRepository
       .createQueryBuilder('account')
+      .leftJoinAndSelect('account.role', 'role')
+      .leftJoinAndSelect('account.quizzes', 'quiz')
       .leftJoinAndSelect('account.posts', 'posts')
+      .leftJoinAndSelect('quiz.account', 'quizAccount')
+      .leftJoinAndSelect('posts.images', 'images')
+      .leftJoinAndSelect('account.events', 'events')
+      .leftJoinAndSelect('events.post', 'post')
+      .leftJoinAndSelect('events.qrs', 'qrs')
       .where('account.id =:id', { id })
       .getOne();
     return account;

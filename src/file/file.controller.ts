@@ -2,10 +2,7 @@ import { storage } from './../config/multer.config';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   Controller,
-  Get,
-  Param,
   Post,
-  Res,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
