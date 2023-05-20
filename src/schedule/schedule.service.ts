@@ -17,7 +17,7 @@ export class ScheduleService {
   }
   async handleSchedule() {
     try {
-      cron.schedule('10000 * * * * *', async () => {
+      cron.schedule('0 6 * * *', async () => {
         const date = new Date();
         const day = date.getDate();
         const month = date.getMonth() + 1; // Trích xuất tháng (tháng bắt đầu từ 0 nên cần cộng thêm 1)

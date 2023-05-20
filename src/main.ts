@@ -10,6 +10,7 @@ async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
+  app.setGlobalPrefix('/v1/api');
   app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/image/' });
   app.use(
     session({
@@ -18,9 +19,8 @@ async function bootstrap() {
       saveUninitialized: true,
     }),
   );
-  app.setGlobalPrefix('api/v1');
   app.listen(port, () => {
-    console.log(`Server  is running on site http://localhost:${port}`);
+    console.log(`Server is running on site http://localhost:${port}`);
   });
 }
 

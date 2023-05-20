@@ -22,7 +22,7 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.postsService.findAll();
   }

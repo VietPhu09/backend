@@ -14,9 +14,15 @@ export class Quiz {
   id: number;
   @Column('json')
   quiz: { question: string; answer: string[] }[];
-  @ManyToOne(() => Account, (account) => account.id)
+  @ManyToOne(() => Account, (account) => account.id, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   business: number;
-  @ManyToOne(() => Account, (account) => account.id)
+  @ManyToOne(() => Account, (account) => account.id, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   account: number;
   @CreateDateColumn()
   createAt: Date;

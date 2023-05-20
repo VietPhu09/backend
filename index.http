@@ -1,0 +1,19 @@
+# # @name getAllAccount
+# GET https://www.cmucs445dis.online/v1/api/account
+
+
+# @name register
+POST https://www.cmucs445dis.online/v1/api/account/register
+
+Content-Type: "application/json"
+
+{
+    "username": "NTT",
+    "email": "nguyentrieutien1@gmail.com",
+    "address": "Tam Tien Nui Thanh Quang Nam",
+    "phone_number": "0866037302",
+    "sex": "male",
+    "password": "nguyenthanhtung",
+    "comfirmPassword": "nguyenthanhtung",
+    "files":[ "C:/Users/civi_/Downloads/g4.jpg"]
+}

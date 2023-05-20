@@ -16,7 +16,10 @@ import {
 export class EventRegister {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => Post, (account) => account.events)
+  @ManyToOne(() => Post, (account) => account.events, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn()
   post: number;
   @ManyToOne(() => Account, (account) => account.events, {

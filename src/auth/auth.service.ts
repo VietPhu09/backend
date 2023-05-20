@@ -12,7 +12,7 @@ export class AuthService {
         .createQueryBuilder('account')
         .where({ email: email })
         .getOne();
-      const isMatch = await comparePassword(pass, account.password);
+      const isMatch = await comparePassword(pass, account?.password);
       if (account && isMatch === true) {
         const { password, address, sex, ...result } = account;
         return result;

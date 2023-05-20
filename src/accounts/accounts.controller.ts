@@ -27,12 +27,14 @@ import { Repository } from 'typeorm';
 import { Account } from './entities/account.entity';
 import { comparePassword } from 'src/helpers/password_compare.helper';
 import { templateResetPassword } from 'src/helpers/templateResetPassword';
+import { Roles } from 'src/decorator/roles.decorator';
+import { Role } from 'src/enums/role.enum';
 
 @Controller('account')
 export class AccountsController {
   constructor(
     private readonly accountsService: AccountsService,
-  private readonly sendMailService: EmailService,
+    private readonly sendMailService: EmailService,
     @InjectRepository(ResetPassword)
     private readonly resetPasswordRepository: Repository<ResetPassword>,
     @InjectRepository(Account)
@@ -46,15 +48,17 @@ export class AccountsController {
   @UseGuards(AuthGuard('local'))
   @Post('/login')
   login(@Body() account) {
+    console.log(account);
     return this.accountsService.login({ email: account.email });
   }
   // @UseGuards(AuthGuard('jwt'))
   @Get()
-  // @Roles(Role.ADMIN, Role.CUSTOMER, Role.BUSSINESS)
+  // @Roles(Role.ADMIN)
   async findAll() {
     return await this.accountsService.findAll();
   }
   @Get(':id')
+  // @Roles(Role.ADMIN)
   findOne(@Param('id') id: string) {
     return this.accountsService.findOne(+id);
   }
@@ -62,7 +66,9 @@ export class AccountsController {
   @Post('/forgot-password')
   async forgotPassword(@Body() body: { email: string }, @Req() req) {
     try {
-      const account: any = await this.accountsService.forgotPassword(body.email);
+      const account: any = await this.accountsService.forgotPassword(
+        body.email,
+      );
       if (!account) {
         return {
           message: 'Account not found in our system !',
@@ -77,7 +83,9 @@ export class AccountsController {
         templateResetPassword(paddedNumber),
       );
       const checkAccountResetPassword =
-        await this.resetPasswordRepository.findOne({where: {account: account.id}})
+        await this.resetPasswordRepository.findOne({
+          where: { account: account.id },
+        });
       // Kiểm tra xem account này đã reset password chưa
       if (checkAccountResetPassword) {
         // Nếu có rồi thì xóa đi
@@ -120,6 +128,12 @@ export class AccountsController {
           body.secret,
           secret.secret,
         );
+        if (body.newPassword !== body.confirmNewPassword) {
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'New password must same ComfirmPassword',
+          };
+        }
         if (!isCompareNumber) {
           return {
             message: 'Confirmation code is incorrect !',
@@ -142,11 +156,13 @@ export class AccountsController {
     } catch (error) {}
   }
   @Patch(':id')
+  // @Roles(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
     return this.accountsService.update(+id, updateAccountDto);
   }
 
   @Delete(':id')
+  // @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.accountsService.remove(+id);
   }

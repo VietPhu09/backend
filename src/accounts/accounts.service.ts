@@ -8,6 +8,7 @@ import { Image } from 'src/image/entities/image.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { hashPassword } from 'src/helpers/password_hash.helper';
 import { Connection } from 'typeorm';
+import { plainToClass } from 'class-transformer';
 @Injectable()
 export class AccountsService {
   constructor(
@@ -23,7 +24,9 @@ export class AccountsService {
     try {
       await queryRunner.startTransaction();
       const { email, files } = createAccountDto;
-      const findAccount = await this.accountRepository.findOne({ where: {email} });
+      const findAccount = await this.accountRepository.findOne({
+        where: { email },
+      });
       if (findAccount) {
         return {
           message: 'Account already exists in the system, please re-register!',
@@ -64,14 +67,7 @@ export class AccountsService {
     return this.authService.login(account);
   }
   async findAll() {
-    return await this.accountRepository
-      .createQueryBuilder('account')
-      .leftJoinAndSelect('account.role', 'role')
-      .getMany();
-  }
-
-  async findOne(id: number): Promise<Account | undefined | Object> {
-    const account = await this.accountRepository
+    const accounts = await this.accountRepository
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.role', 'role')
       .leftJoinAndSelect('account.quizzes', 'quiz')
@@ -81,6 +77,17 @@ export class AccountsService {
       .leftJoinAndSelect('account.events', 'events')
       .leftJoinAndSelect('events.post', 'post')
       .leftJoinAndSelect('events.qrs', 'qrs')
+      .getMany();
+    return {
+      length: accounts.length,
+      accounts,
+    };
+  }
+
+  async findOne(id: number): Promise<Account | undefined | Object> {
+    const account = await this.accountRepository
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.posts', 'posts')
       .where('account.id =:id', { id })
       .getOne();
     return account;
@@ -125,8 +132,6 @@ export class AccountsService {
         await queryRunner.manager.update(Image, image.id, image);
         delete updateAccountDto.files;
       }
-      console.log('log');
-
       await queryRunner.manager.update('account', id, updateAccountDto);
       await queryRunner.commitTransaction();
       return {
@@ -147,7 +152,7 @@ export class AccountsService {
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const account = await this.accountRepository.findOne({ where: {id }});
+      const account = await this.accountRepository.findOne({ where: { id } });
       if (!account) {
         return {
           message: "Account doesn't exits in system !",
@@ -169,10 +174,10 @@ export class AccountsService {
   }
   async forgotPassword(email: string): Promise<Account | Object> {
     try {
-      const account = await this.accountRepository.findOne({ where: {email} });
+      const account = await this.accountRepository.findOne({
+        where: { email },
+      });
       return account;
-    } catch (error) {
-    
-    }
+    } catch (error) {}
   }
 }

@@ -4,6 +4,7 @@ import { Post } from 'src/posts/entities/post.entity';
 import { Qr } from 'src/qr/entities/qr.entity';
 import { Quiz } from 'src/quiz/entities/quiz.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -21,6 +22,7 @@ export class Account {
   id: number;
   @Column()
   username: string;
+  @Exclude()
   @Column()
   email: string;
   @Column()
@@ -29,6 +31,7 @@ export class Account {
   phone_number: string;
   @Column()
   sex: string;
+
   @Column()
   password: string;
   @ManyToOne(() => Role, (role) => role.id, {

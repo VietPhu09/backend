@@ -28,8 +28,6 @@ export class PostsService {
           return postId;
         },
       );
-      console.log(files);
-      
       for (let i = 0; i < files.length; i++) {
         const image = await this.imageRepository.create({
           image_url: files[i],
@@ -44,7 +42,6 @@ export class PostsService {
       };
     } catch (error) {
       console.log(error);
-
       await queryRunner.rollbackTransaction();
       throw new HttpException('Create Post Fail !', HttpStatus.BAD_REQUEST);
     } finally {
@@ -52,8 +49,21 @@ export class PostsService {
     }
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll() {
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.account', 'account')
+      .leftJoinAndSelect('post.images', 'images')
+      .leftJoinAndSelect('post.events', 'events')
+      .leftJoinAndSelect('events.account', 'eventAccount')
+      .getMany();
+    if (!posts) {
+      return {
+        message: `Post doesn't exits in system !`,
+        statusCode: HttpStatus.NOT_FOUND,
+      };
+    }
+    return posts;
   }
 
   async findOne(id: number) {
@@ -90,7 +100,7 @@ export class PostsService {
         }
       }
       delete updatePostDto.files;
-      const findOnePost = await this.postRepository.findOne({where: {id}});
+      const findOnePost = await this.postRepository.findOne({ where: { id } });
       if (!findOnePost) {
         return {
           statusCode: HttpStatus.NOT_FOUND,
@@ -115,7 +125,7 @@ export class PostsService {
     const queryRunner = this.connection.createQueryRunner();
     try {
       await queryRunner.startTransaction();
-      const post = await this.postRepository.findOne({ where: {id} });
+      const post = await this.postRepository.findOne({ where: { id } });
       if (!post) {
         return {
           message: "Post doesn't exits in system !",

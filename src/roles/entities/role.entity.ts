@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Account } from 'src/accounts/entities/account.entity';
 import {
   Entity,
@@ -19,9 +20,12 @@ export class Role {
     onUpdate: 'CASCADE',
   })
   account: number;
+
+  @Exclude()
   @CreateDateColumn()
   createAt: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updateAt: Date;
 }
